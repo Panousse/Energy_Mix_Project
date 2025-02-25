@@ -1,1 +1,1 @@
-# Energy_Mix_Project
+# Energy Mix Project
