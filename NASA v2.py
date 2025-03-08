@@ -48,7 +48,7 @@ for station_id, (lat, lon) in dic_lat_long.items():
         if "properties" in data and "parameter" in data["properties"]:
             data_param = data["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
             df_interval = pd.DataFrame(list(data_param.items()),
-                                       columns=["date_timestamp", "Ensoleillement (W.m^2)"])
+                                       columns=["date_timestamp", "Ensoleillement (Wh/m^2)"])
             df_interval["date_timestamp"] = pd.to_datetime(df_interval["date_timestamp"],
                                                            format="%Y%m%d%H")
             df_interval.set_index("date_timestamp", inplace=True)
@@ -78,7 +78,7 @@ for station_id, (lat, lon) in dic_lat_long.items():
     if "properties" in data and "parameter" in data["properties"]:
         data_param = data["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
         df_interval = pd.DataFrame(list(data_param.items()),
-                                   columns=["date_timestamp", "Ensoleillement (W.m^2)"])
+                                   columns=["date_timestamp", "Ensoleillement (Wh/m^2)"])
         df_interval["date_timestamp"] = pd.to_datetime(df_interval["date_timestamp"],
                                                        format="%Y%m%d%H")
         df_interval.set_index("date_timestamp", inplace=True)
@@ -103,5 +103,5 @@ if results:
     print(final_df.head())
 
     # Exporter en CSV dans le chemin spécifié
-    final_df.to_csv("/home/panousse/code/Atl6s/Energy_Mix_Project/final_df.csv", index=False)
+    final_df.to_csv("/home/panousse/code/Atl6s/Energy_Mix_Project/final_df.csv", index=True)
     print("Exportation terminée : final_df.csv")
