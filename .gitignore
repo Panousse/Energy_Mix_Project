@@ -172,3 +172,4 @@ cython_debug/
 raw_data/
 *.ipynb
 *:Zone.Identifier
+.env
