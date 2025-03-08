@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 raw_data/
 *.ipynb
+*:Zone.Identifier
