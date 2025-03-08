@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 
 # Lecture du fichier des stations météo (ID, Latitude, Longitude)
-df = pd.read_csv(r"Lat_Long_Stat.csv", sep=";")
+df = pd.read_csv(r"/home/panousse/code/Atl6s/Energy_Mix_Project/raw_data/Lat_Long_Stat.csv", sep=";")
 
 # Création d'un dictionnaire des latitudes et longitudes par station
 dic_lat_long = {}
