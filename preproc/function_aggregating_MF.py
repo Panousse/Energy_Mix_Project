@@ -1,20 +1,18 @@
-import requests
-import gzip
-import shutil
 import glob
 import time
 import pandas as pd
-import numpy as np
-
-csv_path="raw_data/"
-
+import os
+from config import CSV_PATH
 
 
 def agregating_meteo_france_data(file_output:str="main_meteo_france_data_frame.csv") :
     """ Merge the monthly CSV files for observations coming from the main stations in France """
+    
     perfcounterstart = time.perf_counter()
 
-    all_files = glob.glob(csv_path+'synop.*.csv') # List of all csv files beginning with "synop"
+    PATH_FILE_OUTPUT = os.path.join(CSV_PATH, file_output)
+
+    all_files = glob.glob(CSV_PATH+'synop.*.csv') # List of all csv files beginning with "synop"
     li = []
     print(f"Number of monthly CSV files to merge : {len(all_files)}")
 
@@ -28,8 +26,11 @@ def agregating_meteo_france_data(file_output:str="main_meteo_france_data_frame.c
         li.append(df2)
 
     concat_frame = pd.concat(li, axis=0, ignore_index=True).drop(columns=['date','t','file']) # Concat all flows coming froml files. Delete not necessary columns from Meteo France dataframe
-    concat_frame.to_csv(csv_path+file_output, index=False) # Write a csv file without index and with comma separator
-    print(f'Agregated Meteo France data into the file {file_output} into the folder {csv_path}.')
+    concat_frame.to_csv(PATH_FILE_OUTPUT, index=False) # Write a csv file without index and with comma separator
+    print(f'Agregated Meteo France data into the file {file_output} into the folder {CSV_PATH}.')
     print(f'Number of lines in the file : {len(concat_frame)}.')
     perfcounterstop = time.perf_counter()
     print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
+
+if __name__ == "__main__":
+    agregating_meteo_france_data()

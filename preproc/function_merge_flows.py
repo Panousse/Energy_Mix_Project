@@ -3,6 +3,18 @@ import pandas as pd
 import os
 from config import CSV_PATH
 
+def links(energy_input:str='donnees_energie.csv',
+                       weather_observation_input:str='donnees_station_lyon.csv',
+                       sunshine_input:str='data_nasa_power.csv',
+                       file_output:str='dataset_final.csv'):
+    
+    PATH_ENERGY = os.path.join(CSV_PATH, energy_input)
+    PATH_WEATHER=os.path.join(CSV_PATH,weather_observation_input)
+    PATH_SUNSHINE=os.path.join(CSV_PATH,sunshine_input)
+    PATH_FILE_OUTPUT=os.path.join(CSV_PATH,file_output)
+    
+
+
 def consolidation_data(energy_input:str='donnees_energie.csv',
                        weather_observation_input:str='donnees_station_lyon.csv',
                        sunshine_input:str='data_nasa_power.csv',
@@ -54,4 +66,4 @@ def consolidation_data(energy_input:str='donnees_energie.csv',
     print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
 
 if __name__ == "__main__":
-    print(consolidation_data())
+    consolidation_data()
