@@ -4,13 +4,15 @@ import pandas as pd
 # Lecture du fichier des stations météo (ID, Latitude, Longitude)
 df = pd.read_csv(r"Lat_Long_Stat.csv", sep=";")
 
+
+def call_appi_nasa(ID,Latitude,Longitude):
 # Création d'un dictionnaire des latitudes et longitudes par station
-dic_lat_long = {}
-for index, row in df.iterrows():
-    ID = row["ID"]
-    Latitude = row["Latitude"]
-    Longitude = row["Longitude"]
-    dic_lat_long[ID] = (Latitude, Longitude)
+    dic_lat_long = {}
+    for index, row in df.iterrows():
+        ID = row["ID"]
+        Latitude = row["Latitude"]
+        Longitude = row["Longitude"]
+        dic_lat_long[ID] = (Latitude, Longitude)
 
 # URL de l'API NASA POWER
 url = "https://power.larc.nasa.gov/api/temporal/hourly/point"
@@ -48,7 +50,7 @@ for station_id, (lat, lon) in dic_lat_long.items():
         if "properties" in data and "parameter" in data["properties"]:
             data_param = data["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
             df_interval = pd.DataFrame(list(data_param.items()),
-                                       columns=["date_timestamp", "Ensoleillement (Wh/m^2)"])
+                                       columns=["date_timestamp", "Ensoleillement (W.m^2)"])
             df_interval["date_timestamp"] = pd.to_datetime(df_interval["date_timestamp"],
                                                            format="%Y%m%d%H")
             df_interval.set_index("date_timestamp", inplace=True)
