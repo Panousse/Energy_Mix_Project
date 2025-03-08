@@ -1,19 +1,18 @@
-import requests
-import gzip
-import shutil
-import glob
-import time
 import pandas as pd
-import numpy as np
-
-csv_path="raw_data/"
+import os
+import time
+from config import CSV_PATH
 
 def convert_energy_data(file_input:str="eco2mix-regional-cons-AURA.csv",
                         file_output:str="donnees_energie.csv") :
     """ Clean and convert the data coming from OpenDRE / RTE """
+    
     perfcounterstart = time.perf_counter()
 
-    df = pd.read_csv(csv_path+file_input,
+    PATH_FILE_INPUT = os.path.join(CSV_PATH, file_input)
+    PATH_FILE_OUTPUT = os.path.join(CSV_PATH, file_output)
+
+    df = pd.read_csv(PATH_FILE_INPUT,
                      index_col=None,
                      header=0,sep=";",
                      dtype="string",)
@@ -33,8 +32,11 @@ def convert_energy_data(file_input:str="eco2mix-regional-cons-AURA.csv",
     df['Ech. physiques (MW)']= pd.to_numeric(df['Ech. physiques (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
 
     df2=df[['date_timestamp','Région','Consommation (MW)','Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)','Ech. physiques (MW)']].copy() # Only useful columns are kept
-    df2.to_csv(csv_path+file_output, index=False)
-    print(f'Data coming from OpenDRE / Enedis stored in the file {file_output} in the folder {csv_path}')
+    df2.to_csv(PATH_FILE_OUTPUT, index=False)
+    print(f'Data coming from OpenDRE / RTE stored in the file {file_output} in the folder {CSV_PATH}')
     print(f'Number of lines in the file : {len(df2)}.')
     perfcounterstop = time.perf_counter()
     print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
+
+if __name__ == "__main__":
+    convert_energy_data()

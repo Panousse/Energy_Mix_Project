@@ -1,12 +1,9 @@
 import requests
 import gzip
 import shutil
-import glob
 import time
-import pandas as pd
-import numpy as np
-
-csv_path="raw_data/"
+import os
+from config import CSV_PATH
 
 def get_meteo_france_data_from_web(start_year:int, end_year:int) :
     """ Get data of Meteo France from the web - CSV files for observations coming from the main stations in France """
@@ -28,18 +25,21 @@ def get_meteo_france_data_from_web(start_year:int, end_year:int) :
             if response.status_code == 200:
 
             # Save the content to a file
-                with open(csv_path+filename+extension1, 'wb') as f:
+                with open(CSV_PATH+filename+extension1, 'wb') as f:
                     f.write(response.content)
                     print(f'File {filename+extension1} downloaded successfully.')
                     downloaded_files_number+=1
 
-                with gzip.open(csv_path+filename+extension1, 'rb') as f_in: # Opening the archive
-                    with open(csv_path+filename+'.csv', 'wb') as f_out:
+                with gzip.open(CSV_PATH+filename+extension1, 'rb') as f_in: # Opening the archive
+                    with open(CSV_PATH+filename+'.csv', 'wb') as f_out:
                         shutil.copyfileobj(f_in, f_out) # Copy of the extraction into a csv file
-                        print(f'File {filename}.csv extracted successfully in the folder {csv_path} .')
+                        print(f'File {filename}.csv extracted successfully in the folder {CSV_PATH} .')
             else:
                 print(f'❌Failed to download {url}. Status code: {response.status_code}')
 
     print(f"Number of files downloaded : {downloaded_files_number}")
     perfcounterstop = time.perf_counter()
     print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
+
+if __name__=="__main__":
+    get_meteo_france_data_from_web(2013,2023)
