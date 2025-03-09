@@ -31,7 +31,7 @@ def convert_energy_data(file_input:str="eco2mix-regional-cons-AURA.csv",
     df['Bioénergies (MW)']= pd.to_numeric(df['Bioénergies (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
     df['Ech. physiques (MW)']= pd.to_numeric(df['Ech. physiques (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
 
-    df2=df[['date_timestamp','Région','Consommation (MW)','Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)','Ech. physiques (MW)']].copy() # Only useful columns are kept
+    df2=df[['date_timestamp', 'numer_sta', 'Région','Consommation (MW)','Thermique (MW)','Nucléaire (MW)','Eolien (MW)','Solaire (MW)','Hydraulique (MW)','Pompage (MW)','Bioénergies (MW)','Ech. physiques (MW)']].copy() # Only useful columns are kept
     df2.to_csv(PATH_FILE_OUTPUT, index=False)
     print(f'Data coming from OpenDRE / RTE stored in the file {file_output} in the folder {CSV_PATH}')
     print(f'Number of lines in the file : {len(df2)}.')
