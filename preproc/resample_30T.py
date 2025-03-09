@@ -1,13 +1,11 @@
-
-
 import os
 from config import CSV_PATH
 import pandas as pd
 
-path_df_hourly="final_df.csv"
-path_df_30mins="final_df_30min.csv"
-PATH_DFHOURLY = os.path.join(CSV_PATH, path_df_hourly)
-PATH_DF30MINS=os.path.join(CSV_PATH,path_df_30mins)
+name_finaldf="final_df.csv"
+name_30mins="final_df_30min.csv"
+PATH_DFHOURLY = os.path.join(CSV_PATH, name_finaldf)
+PATH_DF30MINS=os.path.join(CSV_PATH,name_30mins)
 
 # 1) Lecture du CSV initial
 
@@ -20,8 +18,8 @@ def conversion_30mins(PATH_DFHOURLY):
     # Liste où l’on va stocker les DataFrames resamplés
     df_list = []
 
-    # 3) Groupby par station_id
-    for station_id, group in df.groupby("station_id"):
+    # 3) Groupby par numer_sta
+    for numer_sta, group in df.groupby("numer_sta"):
         # Tri par ordre chronologique
         group = group.sort_values("date_timestamp")
 
@@ -30,15 +28,15 @@ def conversion_30mins(PATH_DFHOURLY):
 
         # Optionnel : supprimer ou agréger les doublons d'index si nécessaire
         group = group[~group.index.duplicated(keep='first')]
-        # ou group = group.groupby(level=0).mean() si vous voulez agréger
+        # ou group = group.groupby(level=0).mean() pour agréger
 
         # 4) Resample en 30 minutes + forward fill
         group_30 = group.resample("30min").ffill()
 
         #interpoler : group_30 = group.resample("30T").interpolate(method='linear'))
 
-        # Réassigner station_id, Latitude, Longitude (surtout utiles si un forward fill)
-        group_30["station_id"] = station_id
+        # Réassigner numer_sta, Latitude, Longitude
+        group_30["numer_stat"] = numer_sta
 
         # Si Latitude et Longitude sont constants pour la station :
         group_30["Latitude"] = group["Latitude"].iloc[0]

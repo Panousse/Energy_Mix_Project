@@ -5,7 +5,7 @@ from config import CSV_PATH
 
 path_df_hourly="final_df.csv"
 PATH_DFHOURLY = os.path.join(CSV_PATH, path_df_hourly)
-stations_csv_path="Lat_Long_Stat.cvs"
+stations_csv_path="Lat_Long_Stat.csv"
 PATH_LAT_LONG=os.path.join(CSV_PATH,stations_csv_path)
 
 def call_api_nasa_yearly(
@@ -122,6 +122,7 @@ def call_api_nasa_yearly(
     if results:
         final_df = pd.concat(results.values())
         print(f"Nombre total de lignes dans final_df : {len(final_df)}")
+        final_df.rename(columns={'station_id':'numer_sta'},inplace=True)
 
         # 6) Export en CSV
         final_df.to_csv(output_csv_path, index=True)
