@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import ConnectionError, Timeout, RequestException
 import time
 import pandas as pd
 import os
@@ -21,32 +22,43 @@ def get_energy_data_from_web(region_to_extract:str="Auvergne-Rhône-Alpes", nume
                 'use_labels':'true',
                 'delimiter':';',
             }
-    print(f"⌛Launching the download request. This may take a long time...")
-    response = requests.get(url_root,params=params,stream=True)
-    print(f" Url used : {response.url}")
+    try:
+        print(f"⌛Launching the download request. This may take a long time...")
+        response = requests.get(url_root,params=params,stream=True, timeout=25)
+        print(f" Url used : {response.url}")
+        response.raise_for_status()
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Save the content to a file
+            with open(PATH_FILE_OUTPUT, 'wb') as f:
+                count=0
+                chunk_size=None
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    count+=1
+                    f.write(chunk) # Write chunk into file and purge the memory for large files
+                    if (count%20==0) : # Display message every 20 chunks / interations - limit the verbosity
+                        print(f"Still downloading the file")
+            print(f'File {file_output} created successfully in the folder {CSV_PATH}.')
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Save the content to a file
-        with open(PATH_FILE_OUTPUT, 'wb') as f:
-            count=0
-            chunk_size=None
-            for chunk in response.iter_content(chunk_size=chunk_size):
-                count+=1
-                f.write(chunk) # Write chunk into file and purge the memory for large files
-                if (count%20==0) : # Display message every 20 chunks / interations - limit the verbosity
-                    print(f"Still downloading the file")
-        print(f'File {file_output} created successfully in the folder {CSV_PATH}.')
+            excel_df = pd.read_csv(PATH_FILE_OUTPUT, sep=";", dtype="string",)
+            excel_df['numer_sta']=numer_sta # Add the station number to the dataframe
+            print(f'Number of lines in the file : {len(excel_df)} for the region {region_to_extract} and for the station {numer_sta}')
+            excel_df.to_csv(PATH_FILE_OUTPUT, index=False, sep=";")
 
-        excel_df = pd.read_csv(PATH_FILE_OUTPUT, sep=";", dtype="string",)
-        excel_df['numer_sta']=numer_sta # Add the station number to the dataframe
-        print(f'Number of lines in the file : {len(excel_df)} for the region {region_to_extract} and for the station {numer_sta}')
-        excel_df.to_csv(PATH_FILE_OUTPUT, index=False, sep=";")
+            perfcounterstop = time.perf_counter()
+            print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
+        else:
+            print(f"❌Failed to retrieve data from {url_root}. Status code: {response.status_code}")
 
-        perfcounterstop = time.perf_counter()
-        print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
-    else:
-        print(f'❌Failed to retrieve data from {url_root}. Status code: {response.status_code}')
+    except ConnectionError:
+        print("❌Connection error. The network is maybe unreachable.")
+    except Timeout:
+        print("❌Timeout. Please retry later.")
+    except RequestException as e:
+        print(f"❌An error occured during the request : {e}")
+    except Exception as e:
+        print(f"❌Unexpected error : {e}")
+
 
 if __name__=="__main__":
     get_energy_data_from_web()
