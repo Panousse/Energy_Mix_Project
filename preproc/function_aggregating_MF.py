@@ -12,12 +12,12 @@ def agregating_meteo_france_data(file_output:str="main_meteo_france_data_frame.c
 
     PATH_FILE_OUTPUT = os.path.join(CSV_PATH, file_output)
 
-    all_files = glob.glob(CSV_PATH+'synop.*.csv') # List of all csv files beginning with "synop"
+    all_files = glob.glob(CSV_PATH+'synop.*.csv.gz') # List of all csv files beginning with "synop"
     li = []
     print(f"Number of monthly CSV files to merge : {len(all_files)}")
 
     for filename in all_files:
-        df = pd.read_csv(filename, index_col=None, header=0,sep=";") # Columns of csv files are separated with semicolumns
+        df = pd.read_csv(filename, index_col=None, header=0,sep=";", compression='gzip') # Columns of csv files are separated with semicolumns
         df2 = df[['numer_sta','date','t','ff']].copy() # Only useful columns are kept
         df2['t_c'] = (pd.to_numeric(df2['t'],errors='coerce')-273.15).round(1) # Transform the temperature from K to °C  - rounded to 1 decimal places
         df2['ff'] = (pd.to_numeric(df2['ff'],errors='coerce')).round(1) # Wind speed rounded to 1 decimal places

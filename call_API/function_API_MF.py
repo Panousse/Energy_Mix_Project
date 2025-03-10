@@ -1,7 +1,5 @@
 import requests
 from requests.exceptions import ConnectionError, Timeout, RequestException
-import gzip
-import shutil
 import time
 import os
 from config import CSV_PATH
@@ -34,10 +32,6 @@ def get_meteo_france_data_from_web(start_year:int, end_year:int) :
                         print(f'File {filename+extension1} downloaded successfully.')
                         downloaded_files_number+=1
 
-                    with gzip.open(os.path.join(CSV_PATH, filename+extension1), 'rb') as f_in: # Opening the archive
-                        with open(os.path.join(CSV_PATH, filename+'.csv'), 'wb') as f_out:
-                         shutil.copyfileobj(f_in, f_out) # Copy of the extraction into a csv file
-                        print(f'File {filename}.csv extracted successfully in the folder {CSV_PATH} .')
                 else:
                     print(f'❌Failed to download {url}. Status code: {response.status_code}')
             except ConnectionError:
