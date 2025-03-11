@@ -5,7 +5,7 @@ from config import CSV_PATH
 
 path_df_hourly="final_df.csv"
 PATH_DFHOURLY = os.path.join(CSV_PATH, path_df_hourly)
-stations_csv_path="Lat_Long_Stat.csv"
+stations_csv_path="postesSynop.csv"
 PATH_LAT_LONG=os.path.join(CSV_PATH,stations_csv_path)
 
 def call_api_nasa_yearly(

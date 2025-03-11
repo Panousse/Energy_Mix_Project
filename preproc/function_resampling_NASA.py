@@ -4,13 +4,13 @@ import pandas as pd
 
 name_finaldf="final_df.csv"
 name_30mins="final_df_30min.csv"
-PATH_DFHOURLY = os.path.join(CSV_PATH, name_finaldf)
-PATH_DF30MINS=os.path.join(CSV_PATH,name_30mins)
+CSV_PATH_INPUT = os.path.join(CSV_PATH, name_finaldf)
+CSV_PATH_OUTPUT=os.path.join(CSV_PATH,name_30mins)
 
 # 1) Lecture du CSV initial
 
-def conversion_30mins(PATH_DFHOURLY):
-    df = pd.read_csv(PATH_DFHOURLY)
+def conversion_30mins(PATH_INPUT=CSV_PATH_INPUT,PATH_OUTPUT=CSV_PATH_OUTPUT):
+    df = pd.read_csv(PATH_INPUT)
 
     # 2) Conversion de la colonne date en datetime
     df["date_timestamp"] = pd.to_datetime(df["date_timestamp"])
@@ -51,10 +51,10 @@ def conversion_30mins(PATH_DFHOURLY):
     # final_df_30min.reset_index(inplace=True)
 
     # 6) Exporter le résultat
-    final_df_30min.to_csv(PATH_DF30MINS, index=True)
+    final_df_30min.to_csv(PATH_OUTPUT, index=True)
     print("Exportation terminée : final_df_30min.csv")
 
     return final_df_30min
 
 if __name__=="__main__":
-    conversion_30mins(PATH_DFHOURLY)
+    conversion_30mins()
