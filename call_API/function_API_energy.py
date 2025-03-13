@@ -5,9 +5,10 @@ import pandas as pd
 import os
 from config import CSV_PATH
 
-def get_energy_data_from_web(region_to_extract:str="Auvergne-Rhône-Alpes", numer_sta:str="7481", file_output:str="eco2mix-regional-cons-AURA.csv") :
+def get_energy_data_from_web(region_to_extract:str="Auvergne-Rhône-Alpes", file_output:str="eco2mix-regional-cons-AURA.csv") :
     """ Retrieve energy data from the ODRÉ (Open Data Reseaux-Énergie) - Données éCO2mix régionales consolidées et définitives """
     # Reference : http://www.rte-france.com/fr/eco2mix/eco2mix
+    # Page de récupération des données : https://odre.opendatasoft.com/explore/dataset/eco2mix-regional-cons-def/information/
 
     perfcounterstart = time.perf_counter()
 
@@ -18,7 +19,8 @@ def get_energy_data_from_web(region_to_extract:str="Auvergne-Rhône-Alpes", nume
     params = {'lang':'fr',
                 'refine':region_param,
                 'facet':'facet(name="libelle_region",disjunctive=true)',
-                'timezone':'Europe/Berlin',
+                'where' : "date_heure<date'2023'",
+                'timezone':'Europe/Berlin', 
                 'use_labels':'true',
                 'delimiter':';',
             }
@@ -41,8 +43,7 @@ def get_energy_data_from_web(region_to_extract:str="Auvergne-Rhône-Alpes", nume
             print(f'File {file_output} created successfully in the folder {CSV_PATH}.')
 
             excel_df = pd.read_csv(PATH_FILE_OUTPUT, sep=";", dtype="string",)
-            excel_df['numer_sta']=numer_sta # Add the station number to the dataframe
-            print(f'Number of lines in the file : {len(excel_df)} for the region {region_to_extract} and for the station {numer_sta}')
+            print(f'Number of lines in the file : {len(excel_df)} for the region {region_to_extract}')
             excel_df.to_csv(PATH_FILE_OUTPUT, index=False, sep=";")
 
             perfcounterstop = time.perf_counter()

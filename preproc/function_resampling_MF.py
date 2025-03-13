@@ -43,12 +43,21 @@ def resampling_meteo_france_data(file_input:str='main_meteo_france_data_frame.cs
         frame_stations = pd.read_csv(CSV_PATH+"postesSynop.csv",sep=";").drop(columns='Altitude') # Delete column 'Altitude" from Meteo France stations dataframe
         frame_stations.rename(columns={"ID": "numer_sta"},inplace=True) # Rename ID with numer_sta for future join
 
-        df_outer=new_dataframe.merge(frame_stations, on="numer_sta") # Join between main dataframe and dataframe related to Meteo France stations
-        print("Overview of the dataframe :")
-        print(df_outer.head(10))
-        df_outer.to_csv(PATH_FILE_OUTPUT, index=False)
-        print(f'Resampled Meteo France data into the file {file_output} with a frequency / interval of {frequency} and with the method {method}')
-        len_file=len(df_outer)
+        df_new_data_frame_merge_stations=new_dataframe.merge(frame_stations, on="numer_sta") # Join between main dataframe and dataframe related to Meteo France stations
+        print("Overview of the resampled dataframe with information of stations :")
+        print(df_new_data_frame_merge_stations.head(10))
+
+        len_file=len(df_new_data_frame_merge_stations)
+        print(f'Number of lines in the file : {len_file:n}.')
+
+        df_aggregated_frame = df_new_data_frame_merge_stations.groupby(['region','date_timestamp']).agg({'ff' : 'mean', 't_c' : 'mean'}).round(2)
+        # ff and t_c grouped by region and time_stamp with round 2
+        print("Overview of the aggregated dataframe on region and timestamp :")
+        print(df_aggregated_frame.head(10))
+        df_aggregated_frame.to_csv(PATH_FILE_OUTPUT, index=True)
+
+        print(f'Resampled and aggregated Meteo France data into the file {file_output} with a frequency / interval of {frequency} and with the method {method}')
+        len_file=len(df_aggregated_frame)
         print(f'Number of lines in the file : {len_file:n}.')
         perfcounterstop = time.perf_counter()
         print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
