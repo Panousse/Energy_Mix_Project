@@ -5,7 +5,7 @@ import os
 from config import CSV_PATH
 
 def resampling_meteo_france_data(file_input:str='main_meteo_france_data_frame.csv',
-                                 file_output:str='resampled_meteo_france_data_frame.csv',
+                                 file_output:str='meteo_france_region_moy.csv',
                                  frequency:str='30 min',
                                  method:str='ffill',
                                  nb_round:int=1) :

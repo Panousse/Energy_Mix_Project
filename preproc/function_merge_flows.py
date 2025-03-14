@@ -4,8 +4,8 @@ import os
 from config import CSV_PATH
 
 def consolidation_data(energy_input:str='donnees_energie.csv',
-                       weather_observation_input:str='donnees_station_lyon.csv',
-                       sunshine_input:str='final_df_30min.csv',
+                       weather_observation_input:str='meteo_france_region_moy.csv',
+                       sunshine_input:str='30mins_region_moy.csv',
                        file_output:str='dataset_final.csv') :
     """ The final dataframe containing informations related to energy (OpenDRÉ / RTE), the weather opbservations (Meteo France) and sunshine (NASA) """
     perfcounterstart = time.perf_counter()
@@ -15,24 +15,23 @@ def consolidation_data(energy_input:str='donnees_energie.csv',
     PATH_SUNSHINE=os.path.join(CSV_PATH,sunshine_input)
     PATH_FILE_OUTPUT=os.path.join(CSV_PATH,file_output)
 
-    df1 = pd.read_csv(PATH_ENERGY) # The dataframe from OpenDRE
-    df1.set_index(['numer_sta','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
+    df1 = pd.read_csv(PATH_ENERGY).rename(columns={"Région": "region"}) # The dataframe from OpenDRE
+    df1.set_index(['region','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
     df1 = df1[~df1.index.duplicated(keep='first')] # Delete duplicates
 
     df2 = pd.read_csv(PATH_WEATHER) # The dataframe from Meteo France
-    df2.set_index(['numer_sta','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
+    df2.set_index(['region','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
     df2 = df2[~df2.index.duplicated(keep='first')] # Delete duplicates
 
     df3 = pd.read_csv(PATH_SUNSHINE) # The dataframe from NASA
-    df3.drop(columns=["Latitude","Longitude"], inplace=True) # Drop unecessary columns (duplicates)
-    df3.set_index(['numer_sta','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
+    df3.set_index(['region','date_timestamp'], inplace=True) # Index set on number_sta, timestamp
 
     
     df_intermediate = pd.concat([df1, df2], axis=1, join="inner") # Merge of dataframes
+    print(f'Number of lines in the file : {len(df_intermediate)}.')
     df_final = pd.concat([df_intermediate, df3], axis=1, join="inner") 
 
     df_final = df_final.rename(columns={
-    "Région": "region",
     "Consommation (MW)": "consommation",
     "Thermique (MW)": "thermique",
     "Nucléaire (MW)": "nucleaire",

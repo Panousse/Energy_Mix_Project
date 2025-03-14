@@ -11,7 +11,7 @@ def get_meteo_france_data_from_web(start_year:int, end_year:int) :
     downloaded_files_number=0
     url_root = "https://donneespubliques.meteofrance.fr/donnees_libres/Txt/Synop/Archive/"
 
-    for year in range(start_year,end_year):
+    for year in range(start_year,end_year+1):
         for month in range(1,13):
             # Send a GET request to the URL - example https://donneespubliques.meteofrance.fr/donnees_libres/Txt/Synop/Archive/synop.199701.csv.gz
 
