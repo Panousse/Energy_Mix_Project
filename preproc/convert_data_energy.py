@@ -3,8 +3,8 @@ import os
 import time
 from config import CSV_PATH
 
-def convert_energy_data(file_input:str="eco2mix-regional-cons-AURA.csv",
-                        file_output:str="donnees_energie.csv") :
+def convert_energy_data(file_input:str="dataset_final.csv",
+                        file_output:str="dataset_final_resampled.csv") :
     """ Clean and convert the data coming from OpenDRE / RTE """
     
     perfcounterstart = time.perf_counter()
@@ -23,7 +23,7 @@ def convert_energy_data(file_input:str="eco2mix-regional-cons-AURA.csv",
 
     df['Consommation (MW)']= pd.to_numeric(df['Consommation (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
     df['Thermique (MW)']= pd.to_numeric(df['Thermique (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
-    df['Numcléaire (MW)']= pd.to_numeric(df['Nucléaire (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
+    df['Nucléaire (MW)']= pd.to_numeric(df['Nucléaire (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
     df['Eolien (MW)']= pd.to_numeric(df['Eolien (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
     df['Solaire (MW)']= pd.to_numeric(df['Solaire (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
     df['Hydraulique (MW)']= pd.to_numeric(df['Hydraulique (MW)'],errors='coerce') # Convert to numeric - NaN in case of error
