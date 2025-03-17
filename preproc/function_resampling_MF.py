@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from config import CSV_PATH
 
-def resampling_meteo_france_data(file_input:str='main_meteo_france_data_frame.csv',
+def resampling_meteo_france_data(file_input:str='aggregated_meteo_data.csv',
                                  file_output:str='meteo_france_region_moy.csv',
                                  frequency:str='30 min',
                                  method:str='ffill',
@@ -15,10 +15,14 @@ def resampling_meteo_france_data(file_input:str='main_meteo_france_data_frame.cs
     PATH_FILE_INPUT = os.path.join(CSV_PATH, file_input)
     PATH_FILE_OUTPUT = os.path.join(CSV_PATH, file_output)
 
-    df = pd.read_csv(PATH_FILE_INPUT,
+    df_input = pd.read_csv(PATH_FILE_INPUT,
                      index_col=None,
-                     sep=",") # Read csv file
-    df['date_timestamp'] = pd.to_datetime(df['date_timestamp'],format='%Y-%m-%d %H:%M:%S') # Transform the date_timestamp column to datetime64[ns]
+                     sep=";",
+                     ) # Read csv file
+    df = df_input[['numer_sta','date','t','ff']].copy() # Only useful columns are kept
+    df['t_c'] = (pd.to_numeric(df['t'],errors='coerce')-273.15).round(1) # Transform the temperature from K to °C  - rounded to 1 decimal places
+    df['ff'] = (pd.to_numeric(df['ff'],errors='coerce')).round(1) # Wind speed rounded to 1 decimal places
+    df['date_timestamp'] = pd.to_datetime(df['date'], format='%Y%m%d%H%M%S').dt.floor('min') # Transform date object to datetime64[ns]
     stations_list=df['numer_sta'].unique() # List of the unique stations
     print("Beginning of the resampling")
     new_dataframe=pd.DataFrame()
@@ -40,7 +44,7 @@ def resampling_meteo_france_data(file_input:str='main_meteo_france_data_frame.cs
         new_dataframe['numer_sta'] = new_dataframe['numer_sta'].astype('int') # Convert the station number into integer
         new_dataframe['t_c'] = (pd.to_numeric(new_dataframe['t_c'],errors='coerce')).round(nb_round) # Transform the temperature from K to °C  - rounded to n decimal places
         new_dataframe['ff'] = (pd.to_numeric(new_dataframe['ff'],errors='coerce')).round(nb_round) # Wind speed rounded to n decimal places
-        frame_stations = pd.read_csv(CSV_PATH+"postesSynop.csv",sep=";").drop(columns='Altitude') # Delete column 'Altitude" from Meteo France stations dataframe
+        frame_stations = pd.read_csv(CSV_PATH+"postesSynop.csv",sep=";", encoding="Latin1").drop(columns='Altitude') # Delete column 'Altitude" from Meteo France stations dataframe
         frame_stations.rename(columns={"ID": "numer_sta"},inplace=True) # Rename ID with numer_sta for future join
 
         df_new_data_frame_merge_stations=new_dataframe.merge(frame_stations, on="numer_sta") # Join between main dataframe and dataframe related to Meteo France stations

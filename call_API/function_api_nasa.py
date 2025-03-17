@@ -39,7 +39,7 @@ def call_api_nasa_yearly(
     """
 
     # 1) Lecture du CSV des stations
-    df_stations = pd.read_csv(stations_csv_path, sep=";")
+    df_stations = pd.read_csv(stations_csv_path, sep=";",encoding="Latin1")
 
     # 2) Création d'un dictionnaire {station_id: (latitude, longitude)}
     dic_lat_long = {}

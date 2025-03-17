@@ -12,7 +12,7 @@ path_30minsoutput=os.path.join(CSV_PATH,name_30minsregionmoy)
 def merge30mins_regions(PATH_INPUT1=path_df30mins,PATH_INPUT2=path_synop,PATH_OUTPUT=path_30minsoutput):
 
     df1=pd.read_csv(PATH_INPUT1,sep=",") #lecture du df nasa 30mins
-    df2=pd.read_csv(PATH_INPUT2,sep=";") #lecture du fichier avec region/ID/Lat//ong
+    df2=pd.read_csv(PATH_INPUT2,sep=";",encoding="latin-1") #lecture du fichier avec region/ID/Lat//ong
 
     df2.rename(columns={"ID":"numer_sta"},inplace=True)
     df2.rename(columns={"Région":"region"},inplace=True)

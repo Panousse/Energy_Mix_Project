@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from config import CSV_PATH
 
-def consolidation_data(energy_input:str='donnees_energie.csv',
+def consolidation_data(energy_input:str='eco2mix_regional_all_converted.csv',
                        weather_observation_input:str='meteo_france_region_moy.csv',
                        sunshine_input:str='30mins_region_moy.csv',
                        file_output:str='dataset_final.csv') :
