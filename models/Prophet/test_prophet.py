@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 from prophet import Prophet
 from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -15,9 +16,11 @@ df2.drop(columns=["region","consommation","thermique","nucleaire","eolien","sola
 df2.rename(columns={'date_timestamp':'ds',
                    'production_totale':'y'},inplace=True)
 train = df2[df2["ds"]< "2022-01-01"] # period 2013 - 2021 included
-train.head()
+print("extrait train :")
+print(train.head())
 test = df2[df2["ds"]>= "2022-01-01"] # only period 2022
-test.head()
+print("extrait test :")
+print(test.head())
 m = Prophet()
 m.fit(train)
 
@@ -33,3 +36,12 @@ print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
 
 print(f'MAE : {mean_absolute_error(forecast2,test2)}')
 print(f'MSE : {mean_squared_error(forecast2,test2)}')
+
+test3=test2.reset_index()
+test3['ds']=pd.to_datetime(test3['ds']) #convert ds to datetime
+test3=test3.set_index(keys='ds')
+
+plt.plot(forecast['ds'], forecast['yhat'],label="yhat - predict")
+plt.plot(test3.index, test3['y'], label="y - real")
+plt.legend(loc="lower left")
+plt.show()
