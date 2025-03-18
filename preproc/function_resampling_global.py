@@ -45,10 +45,10 @@ def resampling_data(file_input:str="dataset_final.csv",
         df_resampled = df_sorted.resample(frequency).mean()
         df_resampled['region']=region
         new_dataframe=new_dataframe._append(df_resampled)
-    new_dataframe.to_csv(PATH_FILE_OUTPUT, index=False)
+    new_dataframe.to_csv(PATH_FILE_OUTPUT, index=True)
 
     print(f'Data coming from the file {file_output} in the folder {CSV_PATH}')
-    print(f'Number of lines in the file : {len(df_resampled)}.')
+    print(f'Number of lines in the file : {len(new_dataframe)}.')
     perfcounterstop = time.perf_counter()
     print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
 
