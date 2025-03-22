@@ -24,12 +24,14 @@ print(test.head())
 m = Prophet()
 m.fit(train)
 
-future = m.make_future_dataframe(periods=365*8,freq="3h", include_history=False)
+periods=90*8
+
+future = m.make_future_dataframe(periods=periods,freq="3h", include_history=False)
 
 forecast = m.predict(future)
 print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail())
 forecast2=forecast[['ds', 'yhat']].set_index('ds')
-test2=test[['ds', 'y']].set_index('ds')
+test2=test[['ds', 'y']].set_index('ds')[:periods]
 
 perfcounterstop = time.perf_counter()
 print(f"⏰Elapsed time : {perfcounterstop - perfcounterstart:.4} s")
